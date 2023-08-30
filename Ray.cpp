@@ -8,3 +8,10 @@ Ray::Ray(const Vec3& org, const Vec3& dir) :
 Vec3 Ray::at(float t) const {
 	return origin + direction*t;
 }
+
+
+Ray Ray::transform(const Matrix4& transMatrix) const {
+	Vec3 newOrigin = transMatrix.multiplyVector(origin);
+	Vec3 newDirection = transMatrix.multiplyVector(direction);
+	return Ray(newOrigin, newDirection);
+}

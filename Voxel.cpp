@@ -34,7 +34,8 @@ bool Voxel::primitivesHit(const Ray& ray, float tmin, float tmax, hit_record& re
         if (prim->boundingBox.intersect(ray, tmin, closest_so_far, temp_rec)) {
             if (prim->hit(ray, tmin, closest_so_far, temp_rec)) {
                 //check if the hit occurs in this voxel
-                if (prim->boundingBox.isPointInside(temp_rec.p)) {
+                //if (prim->boundingBox.isPointInside(temp_rec.p)) 
+                if(true){
                     hit_anything = true;
                     closest_so_far = temp_rec.t;
                     rec = temp_rec;

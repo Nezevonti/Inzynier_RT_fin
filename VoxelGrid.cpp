@@ -3,6 +3,8 @@
 #include "Voxel.h"
 #include "Material.h"
 
+#include <typeinfo>
+
 
 VoxelGrid::VoxelGrid(int sizeX, int sizeY, int sizeZ)
     : sizeX(sizeX), sizeY(sizeY), sizeZ(sizeZ) {
@@ -152,6 +154,12 @@ void VoxelGrid::setPrimitivesToVoxels() {
 
     for (Hittable* h : mainVoxel.primitives) {
         addToVoxels(h);
+
+        //check if light
+        Vec3 emitted = h->mat_ptr->emitted(0, 0, Vec3(0, 0, 0));
+        if (emitted.e[0] != 0.0 && emitted.e[1] != 0.0 && emitted.e[2] != 0.0 ) {
+            this->lights.push_back(h);
+        }
     }
 
 }
@@ -195,9 +203,14 @@ void VoxelGrid::addToVoxels(Hittable* primitive) {
 }
 
 Vec3 VoxelGrid::skybox(const Ray& ray) {
+
+    //return Vec3(0.0001, 0.0001, 0.0001);
+    return Vec3(0.1, 0.1, 0.1);
+    /*
     Vec3 unit_direction = unit_vector(ray.direction);
     float t = 0.5 * (unit_direction.y() + 1.0);
-    return (1.0 - t) * Vec3(1.0, 1.0, 1.0) + t * Vec3(0.5, 0.7, 1.0);
+    return (1.0 - t) * Vec3(0.25, 0.25, 0.25) + t * Vec3(0.5, 0.7, 1.0);
+    */
 }
 
 Vec3 VoxelGrid::CalculateStep(const Ray& ray)const {
@@ -876,6 +889,285 @@ Vec3 VoxelGrid::walkGrid_new(const Ray& ray, int depth) {
     //walked out of the grid, return skybox
     return skybox(ray);
 }
+
+
+
+
+
+
+
+
+
+Vec3 VoxelGrid::GridWalk_Start(const Ray& ray) {
+
+    hit_record rec;
+
+    bool startsInside = mainVoxel.isPointInside(ray.origin);
+    bool hitsScene = mainVoxel.intersect(ray, 0.001, FLT_MAX, rec);
+
+    if (!hitsScene) {
+        return skybox(ray);
+    }
+
+    if (startsInside) {
+        //Calculate coords of the ray origin
+        Vec3 indexes = getVoxelArrayIndexes(ray.origin);
+
+        return GridWalk(ray, 0, (int)indexes.x(), (int)indexes.y(), (int)indexes.z());
+    }
+
+    //Ray starts outside the grid
+    int nextX, nextY, nextZ;
+    int currentX, currentY, currentZ;
+    double tCurrent;
+    Voxel* currentVoxel;
+    Voxel* nextVoxel;
+    opticalMedium* currentMaterial;
+    opticalMedium* nextMaterial;
+
+    //calculate the next voxel
+    Vec3 nextVoxelIndexes = getVoxelArrayIndexes(rec.p);
+    nextX = nextVoxelIndexes.x();
+    nextY = nextVoxelIndexes.y();
+    nextZ = nextVoxelIndexes.z();
+    nextVoxel = getVoxel(nextX, nextY, nextZ);
+    nextMaterial = nextVoxel->material;
+
+    currentMaterial = outsideMaterial;
+    
+    if (nextMaterial->ref_idx == currentMaterial->ref_idx) {
+        Ray newRay(rec.p, ray.direction);
+        return GridWalk(newRay, 0, nextX, nextY, nextZ);
+    }
+
+
+    //Move to new func later on
+    //bool ChangeMedium(Ray ray, hit_record rec, ray scattered, ray attenuation)
+    //calculate normal to current voxel intersection
+    bool b = nextVoxel->intersect(ray, 0.001, FLT_MAX, rec);
+    Ray newRay;
+    Vec3 attenuation;
+
+    Vec3 tmpPoint = ray.at(rec.t); //debug only
+    rec.mat_ptr = nextMaterial;
+
+    //quick hack to pass current refractive index into the scatter function;
+    newRay.direction[0] = -1;
+    newRay.direction[2] = currentMaterial->ref_idx;
+
+    if (b && rec.mat_ptr->scatter(ray, rec, attenuation, newRay)) { //Add passing current&previous 
+        return GridWalk(newRay, 0, nextX, nextY, nextZ);
+    }
+
+    return skybox(ray);
+}
+
+
+
+
+
+
+Vec3 VoxelGrid::GridWalk(const Ray& ray, int depth, int VoxelX, int VoxelY, int VoxelZ) {
+
+    hit_record rec;
+    
+    int stepX, stepY, stepZ;
+    double tCurrent, tPrevious, tNext;
+    int currentX = VoxelX, currentY = VoxelY, currentZ = VoxelZ;
+    int nextX = currentX, nextY=currentY, nextZ=currentZ;
+    Voxel* currentVoxel;
+    Voxel* nextVoxel;
+    opticalMedium* currentMaterial;
+    opticalMedium* nextMaterial;
+    Vec3 voxelSizes = getVoxelSize();
+    Vec3 initialIntersectionPoint;
+
+    Ray scattered;
+    Vec3 attenuation;
+
+    currentVoxel = getVoxel(currentX, currentY, currentZ);
+    
+    bool currhit = currentVoxel->intersect(ray, 0.001, FLT_MAX, rec);
+    initialIntersectionPoint = rec.p;
+
+    Vec3 gridSteps = CalculateStep(ray);
+    stepX = (int)gridSteps.x();
+    stepY = (int)gridSteps.y();
+    stepZ = (int)gridSteps.z();
+
+    //calculate tDeltas
+    double invX = 1.0 / (double)ray.direction.x();
+    double invY = 1.0 / (double)ray.direction.y();
+    double invZ = 1.0 / (double)ray.direction.z();
+
+    double tDeltaX = std::abs(invX) * voxelSizes.x();
+    double tDeltaY = std::abs(invY) * voxelSizes.y();
+    double tDeltaZ = std::abs(invZ) * voxelSizes.z();
+
+
+    //calculate initial tMaxs
+    double dx = (ray.direction.x() >= 0) ? std::abs(currentVoxel->maxPoint.x() - initialIntersectionPoint.x()) : std::abs(currentVoxel->minPoint.x() - initialIntersectionPoint.x());
+    double dy = (ray.direction.y() >= 0) ? std::abs(currentVoxel->maxPoint.y() - initialIntersectionPoint.y()) : std::abs(currentVoxel->minPoint.y() - initialIntersectionPoint.y());
+    double dz = (ray.direction.z() >= 0) ? std::abs(currentVoxel->maxPoint.z() - initialIntersectionPoint.z()) : std::abs(currentVoxel->minPoint.z() - initialIntersectionPoint.z());
+
+    double tMaxX = std::abs(dx * invX);
+    double tMaxY = std::abs(dy * invY);
+    double tMaxZ = std::abs(dz * invZ);
+
+    tCurrent = 0;
+    tNext = tCurrent;
+    tPrevious = tCurrent;
+
+    //loop
+    while (currentX >= 0 && currentX < sizeX &&
+        currentY >= 0 && currentY < sizeY &&
+        currentZ >= 0 && currentZ < sizeZ) {
+
+        currentVoxel = getVoxel(currentX, currentY, currentZ);
+        currentMaterial = currentVoxel->material;
+
+        //
+        hit_record rec_tmp;
+        currentVoxel->intersect(ray, 0.000001, FLT_MAX, rec_tmp);
+
+
+        //primitive in voxel?
+        if (currentVoxel->occupied) {
+            if (currentVoxel->primitivesHit(ray, 0.0001, FLT_MAX, rec)) {
+                //a primitive was hit. Calculate the scattered ray
+                //CHANGE MAX DEPTH TO VARIABLE!!!
+                if (currentVoxel->isPointInside(rec.p)) {
+                    
+                    //quick hack to pass current refractive index into the scatter function;
+                    scattered.direction[0] = -1;
+                    scattered.direction[2] = currentVoxel->material->ref_idx;
+
+                    if (depth < 25 && rec.mat_ptr->scatter(ray, rec, attenuation, scattered)) {
+                        return rec.mat_ptr->emitted(rec.u,rec.v,rec.p) + (attenuation * GridWalk(scattered, depth + 1, currentX, currentY, currentZ));
+                    }
+                    else {
+                        return rec.mat_ptr->emitted(rec.u, rec.v, rec.p);// +attenuation;
+                    }
+                }
+                
+            }
+        }
+
+        //Calculate next voxel
+        if (tMaxX < tMaxY) {
+            if (tMaxX < tMaxZ) {
+                nextX += stepX;
+                tNext = tMaxX;
+                tMaxX += tDeltaX;
+
+            }
+            else {
+                nextZ += stepZ;
+                tNext = tMaxZ;
+                tMaxZ += tDeltaZ;
+
+            }
+        }
+        else {
+            if (tMaxY < tMaxZ) {
+                nextY += stepY;
+                tNext = tMaxY;
+                tMaxY += tDeltaY;
+
+            }
+            else {
+                nextZ += stepZ;
+                tNext = tMaxZ;
+                tMaxZ += tDeltaZ;
+
+            }
+        }
+
+        if (nextX > 0 && nextX < sizeX && nextY > 0 && nextY < sizeY && nextZ > 0 && nextZ < sizeZ) {
+            nextVoxel = getVoxel(nextX, nextY, nextZ);
+            nextMaterial = nextVoxel->material;
+
+
+            if (currentMaterial->ref_idx != nextMaterial->ref_idx) {
+                bool b = nextVoxel->intersect(ray, 0.001, FLT_MAX, rec);
+
+                Vec3 tmpPoint = ray.at(rec.t); //debug only
+
+                rec.mat_ptr = nextMaterial;
+
+                scattered.direction[0] = -1;
+                scattered.direction[2] = currentMaterial->ref_idx;
+
+                if (b && rec.mat_ptr->scatter(ray, rec, attenuation, scattered)) { //Add passing current&previous 
+
+                    Vec3 newSteps = CalculateStep(scattered);
+
+                    if (newSteps.x() != stepX || newSteps.y() != stepY || newSteps.z() != stepZ) {
+                        //reflected
+                        return rec.mat_ptr->emitted(rec.u, rec.v, rec.p) + (attenuation * GridWalk(scattered, depth + 1, currentX, currentY, currentZ));
+                    }
+                    else {
+                        //refracted
+                        return rec.mat_ptr->emitted(rec.u, rec.v, rec.p) + (attenuation * GridWalk(scattered, depth + 1, nextX, nextY, nextZ));
+                    }
+ 
+                }
+            }
+
+
+
+
+            //Calculate traveled distance
+            float tDiff = tNext - tCurrent;
+
+
+            Vec3 pCurrent = ray.at(tCurrent);
+            Vec3 pNext = ray.at(tNext);
+
+            //OUT-SCATTERING
+
+            float pTreshold = std::powf((1.0 - (currentVoxel->material->scatteringProbability)), tDiff);
+            double random = random_double();
+            if (random > pTreshold) {
+                float tScatter = tNext - (tDiff * random_double()); //get a random t somewhere in the voxel
+                hit_record tmprec;
+                tmprec.p = ray.at(tScatter);
+                currentVoxel->material->scatter_inside(ray, tmprec, attenuation, scattered);
+
+                if (depth < 12) return  GridWalk(scattered, depth + 1, currentX, currentY, currentZ);// +0.66 * GridWalk(Ray(tmprec.p, ray.direction), depth + 1, currentX, currentY, currentZ);
+                //else return currentMaterial->albedo;
+                else return skybox(ray);
+            }
+
+            //
+        }
+
+
+
+
+        
+        //Take the step to next voxel
+        tPrevious = tCurrent;
+        tCurrent = tNext;
+        currentX = nextX;
+        currentY = nextY;
+        currentZ = nextZ;
+
+        
+    }
+
+    return skybox(ray);
+
+}
+
+
+
+
+
+
+
+
+
 
 /*
 * Vec3 VoxelGrid::walkGrid(const Ray& ray, int depth) {

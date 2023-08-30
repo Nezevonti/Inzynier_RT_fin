@@ -8,6 +8,7 @@
 #include "camera.h"
 #include "material.h"
 #include "Quad.h"
+#include "Box.h"
 #include "Random.h"
 
 #include "VoxelGrid.h"
@@ -176,7 +177,12 @@ std::vector<Hittable*> simpleSceneVector() {
     scene.push_back(new Sphere(Vec3(11, 9, 8), 3.0, new lambertian(Vec3(0.4, 0.2, 0.1))));
     //scene.push_back(new Sphere(Vec3(8, 8, 8), 2.0, new dielectric(1.5)));
     scene.push_back(new Sphere(Vec3(5, 9, 8), 3.0, new metal(Vec3(0.25, 0.25, 0.25), 0.0)));
-    scene.push_back(new Quad(Vec3(2, 6, 2), Vec3(12, 0, 0), Vec3(0, 0, 12), new lambertian(Vec3(0.2, 0.2, 1.0))));
+    //scene.push_back(new Sphere(Vec3(5, 18, 8), 1.0, new light(Vec3(1.0, 1.0, 1.0))));
+
+    scene.push_back(new Quad(Vec3(2, 10, 2), Vec3(12, 0, 0), Vec3(0, 0, 12), new lambertian(Vec3(0.2, 0.2, 1.0))));
+    scene.push_back(new Quad(Vec3(2, 19, 2), Vec3(16, 0, 0), Vec3(0, 0, 16), new light(Vec3(1.0, 1.0, 1.0))));
+    scene.push_back(new Quad(Vec3(2, 3, 2), Vec3(16, 0, 0), Vec3(0, 0, 16), new lambertian(Vec3(0.2, 0.2, 1.0))));
+    //scene.push_back(new Sphere(Vec3(16, 18, 8), 1.0, new light(Vec3(1, 1, 1))));
 
     //(-3,-2,5) -> (-3,2,1)
     //scene.push_back(new Quad(Vec3(-3, -2, 5), Vec3(0, 0, -4), Vec3(0, 4, 0), new lambertian(Vec3(1.0, 0.2, 0.2))));
@@ -199,6 +205,43 @@ std::vector<Hittable*> simpleSceneVector() {
     return scene;
 }
 
+std::vector<Hittable*> sceneBallOverCamera() {
+    std::vector<Hittable*> scene;
+
+    //scene.push_back(new Quad(Vec3(2, 6, 2), Vec3(12, 0, 0), Vec3(0, 0, 12), new lambertian(Vec3(0.2, 0.2, 0.2))));
+
+    scene.push_back(new Sphere(Vec3(8, 8, 9), 2.0, new lambertian(Vec3(0.4, 0.2, 0.1))));
+
+
+    return scene;
+
+}
+
+
+std::vector<Hittable*> BallLightOcclusion() {
+    std::vector<Hittable*> scene;
+
+    //scene.push_back(new Quad(Vec3(2, 6, 2), Vec3(12, 0, 0), Vec3(0, 0, 12), new lambertian(Vec3(0.2, 0.2, 0.2))));
+
+    scene.push_back(new Sphere(Vec3(8, 8, 5), 2.0, new light(Vec3(1.0, 1.0, 1.0))));
+    scene.push_back(new Sphere(Vec3(8, 8, 9), 1.775, new lambertian(Vec3(0.4, 0.2, 0.1))));
+
+
+    return scene;
+
+}
+
+std::vector<Hittable*> RotateBox() {
+    std::vector<Hittable*> scene;
+
+    scene.push_back(new Box(Vec3(6, 6, 6), Vec3(10, 10, 10), 0, 15, 0, new lambertian(Vec3(0.9, 0.0, 0.0))));
+
+    //scene.push_back(new Sphere(Vec3(14, 8, 14), 1.775, new lambertian(Vec3(0.8, 0.4, 0.2))));
+
+
+    return scene;
+
+}
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
@@ -235,17 +278,41 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
     int nx = WindowWidth;
     int ny = WindowHeight;
-    int ns = 8;
+    int ns = 16;
 
     int sizeA = sizeof(Material*);
 
-    //std::cout << "P3\n" << nx << " " << ny << "\n255\n";
-    Hittable* world = simpleSceneList();
 
-    //Vec3 lookfrom(-7.5, 2, 15);
-    Vec3 lookfrom(8, 10, 26);
-    Vec3 lookat(8, 8, 8);
-    float dist_to_focus = 10.0;
+
+    /*
+    for (int i = 0; i < 10; i++) {
+        Vec3 tmp = randomDirectionWithBias(Vec3(0, 1, 0), M_PI_2);
+    }
+    */
+
+
+    //---Box test ---
+    //hit_record r;
+    //AABB testBB(Vec3(-1,-1,-1),Vec3(1,1,1))
+
+
+
+
+    //---Box test end---
+
+
+
+
+
+
+
+    //std::cout << "P3\n" << nx << " " << ny << "\n255\n";
+    //Hittable* world = simpleSceneList();
+
+    Vec3 lookfrom(10, 12, 40);
+    //Vec3 lookfrom(8, 30, 40);
+    Vec3 lookat(10, 8, 10);
+    float dist_to_focus = 30.0;
     float aperture = 0.1;
 
     Camera cam(lookfrom, lookat, Vec3(0, 1, 0), 20, float(nx) / float(ny), aperture, dist_to_focus);
@@ -255,25 +322,39 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     VoxelGrid Grid(10, 10, 10,gridMin,gridMax);
 
     //2D test with reflection
-    Grid.getVoxel(4, 4, 4)->material = new opticalMedium(1.5, 0.0);
-    Grid.walkGrid_new(Ray(Vec3(5, 9, 3), Vec3(1, 0, 2)), 10);
+    //Grid.getVoxel(4, 4, 4)->material = new opticalMedium(1.5, 0.0);
 
     
-    Grid.mainVoxel.primitives = simpleSceneVector();
+    /*
+    Grid.mainVoxel.primitives = RotateBox();
+    Grid.setPrimitivesToVoxels();
+
+    int iterator = 0;
+    for (Voxel* v : Grid.voxels) {
+        if (v->occupied) {
+            bool b = true;
+        }
+        iterator++;
+    }
+    */
+    //Grid.GridWalk_Start(Ray(Vec3(8, 9, 5), Vec3(1, 0, 1))); //R1 - OK
+    //Grid.GridWalk_Start(Ray(Vec3(3, 9, 7), Vec3(2.5, 0, 1))); //R2 - OK (both refractions)
+    //Grid.GridWalk_Start(Ray(Vec3(15, 9, 19), Vec3(-1, 0, -2))); //R3 - OK Like R1 but -dir 
+
+    Grid.mainVoxel.primitives = RotateBox();//BallLightOcclusion();//simpleSceneVector();
+    
     //Grid.setAABB();
     Grid.setPrimitivesToVoxels();
 
 
+    opticalMedium* mediumII = new opticalMedium(1.3, 0.005, Vec3(0.53,0.81,0.98));
     
-
-    /*
     for (Voxel* v : Grid.voxels) {
         if (v->maxPoint.y() > 8.0) continue;
 
-        v->material->ref_idx = 1.5;
-        v->material->albedo = Vec3(0.5, 0.3, 0.2);
+        v->material = mediumII;
     }
-    */
+    
     /*
     //Ray r(lookfrom,lookat-lookfrom);
     //Vec3 returned = Grid.walkGrid(r, 0);
@@ -297,7 +378,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
                 Ray r = cam.get_ray(u, v);
                 //col += color(r, world, 0);
                 //col = col + color(r, world, 0);
-                Vec3 returned = Grid.walkGrid(r, 0);
+                //Vec3 returned = Grid.walkGrid(r, 0);
+                Vec3 returned = Grid.GridWalk_Start(r);
+
+                //check for NaN errors
+                if (returned.x() != returned.x() || returned.y() != returned.y() || returned.z() != returned.z()) {
+                    continue;
+                }
+
                 col = col + returned;
             }
             //col /= float(ns);

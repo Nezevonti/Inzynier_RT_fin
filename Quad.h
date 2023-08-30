@@ -18,6 +18,6 @@ public:
     Vec3 normal;
     Vec3 w;
 
-    Material* mat_ptr;
+    //Material* mat_ptr;
 };
 

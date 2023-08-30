@@ -23,6 +23,10 @@ class Hittable {
 public:
 
     AABB boundingBox;
+    Material* mat_ptr;
+
+    Hittable() {};
+    Hittable(Material* material_ptr) : mat_ptr(material_ptr) {};
 
     virtual bool hit(const Ray& r, float t_min, float t_max, hit_record& rec) const = 0;
     virtual void setAABB() = 0;

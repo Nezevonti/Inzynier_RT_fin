@@ -1,6 +1,6 @@
 #include "Quad.h"
 
-Quad::Quad(Vec3 minPoint, Vec3 u, Vec3 v, Material* m) : minPoint(minPoint), u(u), v(v), mat_ptr(m) {
+Quad::Quad(Vec3 minPoint, Vec3 u, Vec3 v, Material* m) : minPoint(minPoint), u(u), v(v), Hittable(m) {
 	Vec3 uvCross = cross(u, v);
 	this->normal = unit_vector(uvCross);
 

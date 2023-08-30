@@ -14,6 +14,7 @@ public:
     int sizeZ;
 
     std::vector<Voxel*> voxels; //grid of voxels describing the scene
+    std::vector<Hittable*> lights;
     Voxel mainVoxel;
 
     opticalMedium* outsideMaterial;
@@ -35,6 +36,9 @@ public:
     Vec3 walkGrid_new(const Ray& ray, int depth);
     Vec3 skybox(const Ray& ray);
 
+
+    Vec3 GridWalk_Start(const Ray& Ray);
+    Vec3 GridWalk(const Ray& ray, int depth, int VoxelX, int VoxelY, int VoxelZ);
 
     Vec3 CalculateStep(const Ray& ray)const;
     Vec3 CalculateDelta(const Ray& ray)const;

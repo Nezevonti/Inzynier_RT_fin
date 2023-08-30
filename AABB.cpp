@@ -44,17 +44,17 @@ bool AABB::intersect(const Ray& ray, float t_min, float t_max, hit_record& rec) 
 
         
         if (tmin_overall == tmin_direction[0])
-            rec.normal= Vec3(-1, 0, 0);
+            rec.normal= Vec3(1, 0, 0);
         else if (tmin_overall == tmin_direction[1])
-            rec.normal = Vec3(0, -1, 0);
-        else if (tmin_overall == tmin_direction[2])
-            rec.normal = Vec3(0, 0, -1);
-        else if (tmin_overall == tmax_direction[0])
-            rec.normal = Vec3(1, 0, 0);
-        else if (tmin_overall == tmax_direction[1])
             rec.normal = Vec3(0, 1, 0);
-        else if (tmin_overall == tmax_direction[2])
+        else if (tmin_overall == tmin_direction[2])
             rec.normal = Vec3(0, 0, 1);
+        else if (tmin_overall == tmax_direction[0])
+            rec.normal = Vec3(-1, 0, 0);
+        else if (tmin_overall == tmax_direction[1])
+            rec.normal = Vec3(0, -1, 0);
+        else if (tmin_overall == tmax_direction[2])
+            rec.normal = Vec3(0, 0, -1);
 
         
 

@@ -128,10 +128,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AABB.cpp" />
+    <ClCompile Include="Box.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Hittable.cpp" />
     <ClCompile Include="Hittable_List.cpp" />
     <ClCompile Include="Material.cpp" />
+    <ClCompile Include="Matrix4.cpp" />
     <ClCompile Include="Quad.cpp" />
     <ClCompile Include="Random.cpp" />
     <ClCompile Include="Ray.cpp" />
@@ -143,10 +145,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AABB.h" />
+    <ClInclude Include="Box.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Hittable.h" />
     <ClInclude Include="Hittable_List.h" />
     <ClInclude Include="Material.h" />
+    <ClInclude Include="Matrix4.h" />
     <ClInclude Include="Quad.h" />
     <ClInclude Include="Random.h" />
     <ClInclude Include="Ray.h" />

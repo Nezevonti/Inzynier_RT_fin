@@ -25,6 +25,8 @@ public:
     inline float operator[](int i) const { return e[i]; }
     inline float& operator[](int i) { return e[i]; }
 
+    void set(float x, float y, float z);
+
     /*
     inline Vec3 operator+(const Vec3& v);
     inline Vec3 operator+(float f);
@@ -48,6 +50,8 @@ public:
     inline float length() const { return sqrt(e[0] * e[0] + e[1] * e[1] + e[2] * e[2]); }
     inline float squared_length() const { return e[0] * e[0] + e[1] * e[1] + e[2] * e[2]; }
     inline void make_unit_vector();
+
+    Vec3 rotate(const Vec3& axis, float angle) const;
 
 
     float e[3];

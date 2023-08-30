@@ -9,14 +9,14 @@
 class Sphere : public Hittable {
 public:
     Sphere() {}
-    Sphere(Vec3 cen, float r, Material* m) : center(cen), radius(r), mat_ptr(m) { setAABB(); };
+    Sphere(Vec3 cen, float r, Material* m) : center(cen), radius(r), Hittable(m) { setAABB(); };
 
     virtual bool hit(const Ray& r, float tmin, float tmax, hit_record& rec) const;
     virtual void setAABB();
 
     Vec3 center;
     float radius;
-    Material* mat_ptr;
+    //Material* mat_ptr;
 };
 
 

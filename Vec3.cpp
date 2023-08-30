@@ -98,3 +98,16 @@ inline Vec3& Vec3::operator/=(const float t) {
     return *this;
 }
 
+Vec3 Vec3::rotate(const Vec3& axis, float angle) const {
+    float cosTheta = std::cos(angle);
+    float sinTheta = std::sin(angle);
+
+    Vec3 crossVector = cross(axis,*this);
+    return *this * cosTheta + crossVector * sinTheta + axis * dot(axis, *this) * (1 - cosTheta);
+}
+
+void Vec3::set(float x, float y, float z) {
+    this->e[0] = x;
+    this->e[1] = y;
+    this->e[2] = z;
+}
