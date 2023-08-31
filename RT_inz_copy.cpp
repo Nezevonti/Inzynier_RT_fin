@@ -240,7 +240,7 @@ std::vector<Hittable*> RotateBox() {
 
     scene.push_back(new Sphere(Vec3(7, 8, 8), 2, new dielectric(1.5)));
 
-    scene.push_back(new Sphere(Vec3(12, 2, 12), 0.5, new light(Vec3(1.0, 1.0, 1.0))));
+    //scene.push_back(new Sphere(Vec3(12, 2, 12), 0.5, new light(Vec3(1.0, 1.0, 1.0))));
 
     //scene.push_back(new Sphere(Vec3(8, 8, 5), 2.0, new light(Vec3(1.0, 1.0, 1.0))));
     // 
@@ -248,13 +248,14 @@ std::vector<Hittable*> RotateBox() {
     // 
     //box
     //bottom
-    scene.push_back(new Quad(Vec3(0.5, 0, 0.5), Vec3(19, 0, 0), Vec3(0, 0, 19), new lambertian(Vec3(0.8, 0.8, 1.0))));
+    scene.push_back(new Quad(Vec3(0.5, 0.5, 0.5), Vec3(19, 0, 0), Vec3(0, 0, 19), new lambertian(Vec3(0.8, 0.8, 1.0))));
     //scene.push_back(new Quad(Vec3(0.5, 0.5, 0.5), Vec3(19, 0, 0), Vec3(0, 0, 19), new light(Vec3(1.0, 1.0, 1.0))));
     //top
     scene.push_back(new Quad(Vec3(0.5, 19.5, 0.5), Vec3(19, 0, 0), Vec3(0, 0, 19), new light(Vec3(1.0, 1.0, 1.0))));
     //back
 
     scene.push_back(new Quad(Vec3(0.5, 19.5, 19.5), Vec3(19, 0, 0), Vec3(0, -19, 0), new lambertian(Vec3(0.8, 0.8, 1.0))));
+    scene.push_back(new Quad(Vec3(4, 7.25, 19.0), Vec3(6, 0, 0), Vec3(0, -1, 0), new lambertian(Vec3(0.99, 0.75, 0.0))));
     //scene.push_back(new Quad(Vec3(0.5, 0.5, 19.5), Vec3(19, 0, 0), Vec3(0, 19, 0), new lambertian(Vec3(0.0, 0.8, 1.0))));
 
     //left right
@@ -303,7 +304,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
     int nx = WindowWidth;
     int ny = WindowHeight;
-    int ns = 32;
+    int ns = 128;
 
     int sizeA = sizeof(Material*);
 
@@ -372,7 +373,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     Grid.setPrimitivesToVoxels();
 
 
-    opticalMedium* mediumII = new opticalMedium(1.3, 0.005, Vec3(0.53,0.81,0.98));
+    opticalMedium* mediumII = new opticalMedium(1.5, 0.005, Vec3(0.53,0.81,0.98));
     
     for (Voxel* v : Grid.voxels) {
         if (v->maxPoint.y() > 8.0) continue;
