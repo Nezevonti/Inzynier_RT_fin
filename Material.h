@@ -42,6 +42,15 @@ inline Vec3 random_in_unit_sphere() {
     return p;
 }
 
+inline Vec3 randomInUnitHemisphere(const Vec3& normal) {
+    Vec3 randomDir = random_in_unit_sphere();
+    if (dot(randomDir, normal) < 0.0f) {
+        randomDir = -randomDir;
+    }
+
+    return randomDir;
+}
+
 inline Vec3 randomDirectionWithBias(const Vec3& meanDirection, float biasFactor) {
     // Generate a random direction using spherical coordinates
     float phi = 2.0f * M_PI * static_cast<float>(rand()) / RAND_MAX;
@@ -91,7 +100,8 @@ class lambertian : public Material {
 public:
     lambertian(const Vec3& a) : albedo(a) {}
     virtual bool scatter(const Ray& r_in, const hit_record& rec, Vec3& attenuation, Ray& scattered) const {
-        Vec3 target = rec.p + rec.normal + random_in_unit_sphere();
+        //Vec3 target = rec.p + rec.normal + random_in_unit_sphere();
+        Vec3 target = rec.p + rec.normal + randomInUnitHemisphere(rec.normal);
         scattered = Ray(rec.p, target - rec.p);
         attenuation = albedo;
         return true;

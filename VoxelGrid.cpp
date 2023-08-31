@@ -204,13 +204,15 @@ void VoxelGrid::addToVoxels(Hittable* primitive) {
 
 Vec3 VoxelGrid::skybox(const Ray& ray) {
 
-    //return Vec3(0.0001, 0.0001, 0.0001);
-    return Vec3(0.1, 0.1, 0.1);
+    //eturn Vec3(0.0001, 0.0001, 0.0001);
+    return Vec3(0.5, 0.5, 0.5);
+    
     /*
     Vec3 unit_direction = unit_vector(ray.direction);
     float t = 0.5 * (unit_direction.y() + 1.0);
     return (1.0 - t) * Vec3(0.25, 0.25, 0.25) + t * Vec3(0.5, 0.7, 1.0);
     */
+    
 }
 
 Vec3 VoxelGrid::CalculateStep(const Ray& ray)const {
@@ -1027,8 +1029,8 @@ Vec3 VoxelGrid::GridWalk(const Ray& ray, int depth, int VoxelX, int VoxelY, int 
         currentMaterial = currentVoxel->material;
 
         //
-        hit_record rec_tmp;
-        currentVoxel->intersect(ray, 0.000001, FLT_MAX, rec_tmp);
+        //hit_record rec_tmp;
+        //currentVoxel->intersect(ray, 0.000001, FLT_MAX, rec_tmp);
 
 
         //primitive in voxel?

@@ -234,10 +234,35 @@ std::vector<Hittable*> BallLightOcclusion() {
 std::vector<Hittable*> RotateBox() {
     std::vector<Hittable*> scene;
 
-    scene.push_back(new Box(Vec3(6, 6, 6), Vec3(10, 10, 10), 0, 15, 0, new lambertian(Vec3(0.9, 0.0, 0.0))));
+    scene.push_back(new Box(Vec3(10, 6, 6), Vec3(12, 10, 10), 0, 0, 0, new lambertian(Vec3(0.0, 0.9, 0.9))));
 
-    //scene.push_back(new Sphere(Vec3(14, 8, 14), 1.775, new lambertian(Vec3(0.8, 0.4, 0.2))));
+    scene.push_back(new Sphere(Vec3(15, 8, 10), 1.775, new lambertian(Vec3(0.8, 0.4, 0.2))));
 
+    scene.push_back(new Sphere(Vec3(7, 8, 8), 2, new dielectric(1.5)));
+
+    scene.push_back(new Sphere(Vec3(12, 2, 12), 0.5, new light(Vec3(1.0, 1.0, 1.0))));
+
+    //scene.push_back(new Sphere(Vec3(8, 8, 5), 2.0, new light(Vec3(1.0, 1.0, 1.0))));
+    // 
+    // 
+    // 
+    //box
+    //bottom
+    scene.push_back(new Quad(Vec3(0.5, 0, 0.5), Vec3(19, 0, 0), Vec3(0, 0, 19), new lambertian(Vec3(0.8, 0.8, 1.0))));
+    //scene.push_back(new Quad(Vec3(0.5, 0.5, 0.5), Vec3(19, 0, 0), Vec3(0, 0, 19), new light(Vec3(1.0, 1.0, 1.0))));
+    //top
+    scene.push_back(new Quad(Vec3(0.5, 19.5, 0.5), Vec3(19, 0, 0), Vec3(0, 0, 19), new light(Vec3(1.0, 1.0, 1.0))));
+    //back
+
+    scene.push_back(new Quad(Vec3(0.5, 19.5, 19.5), Vec3(19, 0, 0), Vec3(0, -19, 0), new lambertian(Vec3(0.8, 0.8, 1.0))));
+    //scene.push_back(new Quad(Vec3(0.5, 0.5, 19.5), Vec3(19, 0, 0), Vec3(0, 19, 0), new lambertian(Vec3(0.0, 0.8, 1.0))));
+
+    //left right
+    scene.push_back(new Quad(Vec3(0.5, 19.5, 0.5), Vec3(0, 0, 19), Vec3(0, -19, 0), new lambertian(Vec3(1.0, 0.1, 0.1))));
+    scene.push_back(new Quad(Vec3(19.5, 0, 0.5), Vec3(0, 0, 19), Vec3(0, 19, 0), new lambertian(Vec3(0.1, 1.0, 0.1))));
+
+    //scene.push_back(new Quad(Vec3(0.5, 19.5, 0.5), Vec3(0, 0, 19), Vec3(0, -19, 0), new light(Vec3(1.0, 1.0, 1.0))));
+    //scene.push_back(new Quad(Vec3(19.5, 0, 0.5), Vec3(0, 0, 19), Vec3(0, 19, 0), new light(Vec3(1.0, 1.0, 1.0))));
 
     return scene;
 
@@ -278,7 +303,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
     int nx = WindowWidth;
     int ny = WindowHeight;
-    int ns = 16;
+    int ns = 32;
 
     int sizeA = sizeof(Material*);
 
@@ -309,7 +334,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     //std::cout << "P3\n" << nx << " " << ny << "\n255\n";
     //Hittable* world = simpleSceneList();
 
-    Vec3 lookfrom(10, 12, 40);
+    Vec3 lookfrom(10, 10, -40);
     //Vec3 lookfrom(8, 30, 40);
     Vec3 lookat(10, 8, 10);
     float dist_to_focus = 30.0;
