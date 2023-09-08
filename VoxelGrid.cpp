@@ -1118,7 +1118,7 @@ Vec3 VoxelGrid::GridWalk(const Ray& ray, int depth, int VoxelX, int VoxelY, int 
 
 
 
-
+            
             //Calculate traveled distance
             float tDiff = tNext - tCurrent;
 
@@ -1136,11 +1136,11 @@ Vec3 VoxelGrid::GridWalk(const Ray& ray, int depth, int VoxelX, int VoxelY, int 
                 tmprec.p = ray.at(tScatter);
                 currentVoxel->material->scatter_inside(ray, tmprec, attenuation, scattered);
 
-                if (depth < 12) return  attenuation * GridWalk(scattered, depth + 1, currentX, currentY, currentZ);// +0.66 * GridWalk(Ray(tmprec.p, ray.direction), depth + 1, currentX, currentY, currentZ);
-                //else return currentMaterial->albedo;
-                else return skybox(ray);
+                if (depth < 5) return  attenuation * GridWalk(scattered, depth + 1, currentX, currentY, currentZ);// +0.66 * GridWalk(Ray(tmprec.p, ray.direction), depth + 1, currentX, currentY, currentZ);
+                else return attenuation;
+                //else return skybox(ray);
             }
-
+            
             //
         }
 

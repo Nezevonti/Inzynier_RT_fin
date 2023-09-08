@@ -17,8 +17,8 @@
 #include <Windows.h>
 #include <vector>
 // Window dimensions
-const int WindowWidth = 1920;
-const int WindowHeight = 1080;
+const int WindowWidth = 1920/2;
+const int WindowHeight = 1080/2;
 
 Vec3 pixels[WindowHeight][WindowWidth];
 
@@ -238,6 +238,9 @@ std::vector<Hittable*> RotateBox() {
 
     scene.push_back(new Sphere(Vec3(15, 8, 14), 1.775, new lambertian(Vec3(0.8, 0.4, 0.2))));
 
+    scene.push_back(new Sphere(Vec3(15, 10.5, 13.2), 0.5, new metal(Vec3(0.25, 0.25, 0.25), 0.0)));
+
+
     scene.push_back(new Sphere(Vec3(7, 8, 12), 2, new dielectric(1.5)));
 
     //scene.push_back(new Sphere(Vec3(12, 2, 12), 0.5, new light(Vec3(1.0, 1.0, 1.0))));
@@ -265,6 +268,7 @@ std::vector<Hittable*> RotateBox() {
     //scene.push_back(new Quad(Vec3(0.5, 19.5, 0.5), Vec3(0, 0, 19), Vec3(0, -19, 0), new light(Vec3(1.0, 1.0, 1.0))));
     //scene.push_back(new Quad(Vec3(19.5, 0, 0.5), Vec3(0, 0, 19), Vec3(0, 19, 0), new light(Vec3(1.0, 1.0, 1.0))));
 
+    
     return scene;
 
 }
@@ -304,9 +308,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
     int nx = WindowWidth;
     int ny = WindowHeight;
-    int ns = 256;
+    int ns = 16;
 
-    int sizeA = sizeof(Material*);
+    int sizeA = sizeof(Voxel);
 
 
 
@@ -335,17 +339,31 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     //std::cout << "P3\n" << nx << " " << ny << "\n255\n";
     //Hittable* world = simpleSceneList();
 
-    Vec3 lookfrom(10, 10, -40);
+    Vec3 lookfrom(10, 18, 5);
+    //Vec3 lookfrom(10, 18, 0);
+    //Vec3 lookfrom(10, 18, -5);
+    //Vec3 lookfrom(10, 18, -10);
+    //Vec3 lookfrom(10, 16, -15);
+    //Vec3 lookfrom(10, 12, -20);
+    //Vec3 lookfrom(10, 12, -30);
+    //Vec3 lookfrom(10, 10, -40);
+    //Vec3 lookfrom(10, 8, -40);
     //Vec3 lookfrom(8, 30, 40);
-    Vec3 lookat(10, 8, 10);
-    float dist_to_focus = 30.0;
-    float aperture = 0.1;
 
-    Camera cam(lookfrom, lookat, Vec3(0, 1, 0), 20, float(nx) / float(ny), aperture, dist_to_focus);
+    Vec3 lookat(10, 8, 10);
+    //Vec3 lookat(15, 10, 12);
+
+
+    Vec3 focusDistance(lookfrom.x() - lookat.x(), lookfrom.y() - lookat.y(), lookfrom.z() - lookat.z());
+
+    float dist_to_focus = std::sqrt(focusDistance.x()*focusDistance.x() + focusDistance.y()*focusDistance.y() + focusDistance.z()*focusDistance.z());
+    float aperture = 0.2;
+
+    Camera cam(lookfrom, lookat, Vec3(0, 1, 0), 16, float(nx) / float(ny), aperture, dist_to_focus);
 
     Vec3 gridMin(0, 0, 0);
     Vec3 gridMax(20, 20, 20);
-    VoxelGrid Grid(10, 10, 10,gridMin,gridMax);
+    VoxelGrid Grid(60, 60, 60,gridMin,gridMax);
 
     //2D test with reflection
     //Grid.getVoxel(4, 4, 4)->material = new opticalMedium(1.5, 0.0);
@@ -373,7 +391,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     Grid.setPrimitivesToVoxels();
 
 
-    opticalMedium* mediumII = new opticalMedium(1.35, 0.0005, Vec3(0.53,0.81,0.98));
+    opticalMedium* mediumII = new opticalMedium(1.33, 0.05, Vec3(0.3,0.3,0.5));
     
     for (Voxel* v : Grid.voxels) {
         if (v->maxPoint.y() > 8.0) continue;
@@ -431,7 +449,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     ShowWindow(hwnd, nCmdShow);
 
     // Enter the message loop
-    MSG msg = {};
+     MSG msg = {};
     while (GetMessage(&msg, NULL, 0, 0))
     {
         TranslateMessage(&msg);
