@@ -43,21 +43,6 @@ public:
     Vec3 CalculateStep(const Ray& ray)const;
     Vec3 CalculateDelta(const Ray& ray)const;
 
-
-    /*
-    void traverseRay(const Ray& ray, hit_record& rec);
-
-
-    Vec3 traverseRay_new(const Ray& ray, hit_record& rec, int depth);
-
-    Vec3 voxelMediumChange(const Ray& ray, Vec3 normal, float refractionRatio);
-
-    //move to medium supporting class later
-    Vec3 reflect(Vec3 rayIn, Vec3 normal);
-    bool refract(Vec3 rayIn, Vec3 normal, float refractionRatio, Vec3& rayRefracted);
-    */
-
-
     void addToVoxels(Hittable* primitive);
     void setPrimitivesToVoxels();
     void setAABB();

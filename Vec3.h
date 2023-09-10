@@ -27,19 +27,6 @@ public:
 
     void set(float x, float y, float z);
 
-    /*
-    inline Vec3 operator+(const Vec3& v);
-    inline Vec3 operator+(float f);
-    inline Vec3 operator-(const Vec3& v);
-    inline Vec3 operator-(float f);
-    inline Vec3 operator*(const Vec3& v);
-    inline Vec3 operator*(float scalar);
-    inline Vec3 operator/(const Vec3& v);
-    inline Vec3 operator/(float scalar);
-    inline float dot(const Vec3& v1, const Vec3& v2);
-    inline Vec3 cross(const Vec3& v1, const Vec3& v2);
-    */
-
     inline Vec3& operator+=(const Vec3& v2);
     inline Vec3& operator-=(const Vec3& v2);
     inline Vec3& operator*=(const Vec3& v2);
@@ -102,9 +89,5 @@ inline Vec3 unit_vector(Vec3 v) {
     return v / v.length();
 }
 
-/*
-inline double random_double() {
-    return rand() / (RAND_MAX + 1.0);
-}
-*/
+
 #endif // Vec3_H

@@ -1,59 +1,6 @@
 #include "Vec3.h"
 
 
-/*
-inline void Vec3::make_unit_vector() {
-    float k = 1.0 / sqrt(e[0] * e[0] + e[1] * e[1] + e[2] * e[2]);
-    e[0] *= k; e[1] *= k; e[2] *= k;
-}
-
-inline Vec3 Vec3::operator+(const Vec3& v) {
-    return Vec3(e[0] + v.e[0], e[1] + v.e[1], e[2] + v.e[2]);
-}
-
-inline Vec3 Vec3::operator+(float f) {
-    return Vec3(e[0] + f, e[1] + f, e[2] + f);
-}
-
-inline Vec3 Vec3::operator-(const Vec3& v) {
-    return Vec3(e[0] - v.e[0], e[1] - v.e[1], e[2] - v.e[2]);
-}
-
-inline Vec3 Vec3::operator-(float f) {
-    return Vec3(e[0] - f, e[1] - f, e[2] - f);
-}
-
-inline Vec3 Vec3::operator*(const Vec3& v) {
-    return Vec3(e[0] * v.e[0], e[1] * v.e[1], e[2] * v.e[2]);
-}
-
-inline Vec3 Vec3::operator*(float scalar) {
-    return Vec3(e[0] * scalar, e[1] * scalar, e[2] * scalar);
-}
-
-inline Vec3 Vec3::operator/(const Vec3& v) {
-    return Vec3(e[0] / v.e[0], e[1] / v.e[1], e[2] / v.e[2]);
-}
-
-
-inline Vec3 Vec3::operator/(float scalar) {
-    return Vec3(e[0] / scalar, e[1] / scalar, e[2] / scalar);
-}
-
-
-inline float Vec3::dot(const Vec3& v1, const Vec3& v2) {
-    return v1.e[0] * v2.e[0]
-        + v1.e[1] * v2.e[1]
-        + v1.e[2] * v2.e[2];
-}
-
-inline Vec3 Vec3::cross(const Vec3& v1, const Vec3& v2) {
-    return Vec3(v1.e[1] * v2.e[2] - v1.e[2] * v2.e[1],
-        v1.e[2] * v2.e[0] - v1.e[0] * v2.e[2],
-        v1.e[0] * v2.e[1] - v1.e[1] * v2.e[0]);
-}
-*/
-
 inline Vec3& Vec3::operator+=(const Vec3& v) {
     e[0] += v.e[0];
     e[1] += v.e[1];

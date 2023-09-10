@@ -16,14 +16,6 @@ Voxel::Voxel(const Vec3& minPoint, const Vec3& maxPoint, opticalMedium* matPtr)
 
 }
 
-/*
-void Voxel::setAABB(){
-
-    for (Hittable* h : primitives) {
-
-    }
-}
-*/
 
 bool Voxel::primitivesHit(const Ray& ray, float tmin, float tmax, hit_record& rec) {
     hit_record temp_rec;
