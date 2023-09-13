@@ -93,6 +93,14 @@ public:
     virtual Vec3 emitted(double u, double v, const Vec3& p) const {
         return Vec3(0.0, 0.0, 0.0);
     }
+
+    virtual Vec3 color() const{
+        return Vec3(0.0, 0.0, 0.0);
+    }
+
+    virtual float refIndex() const{
+        return 1.0;
+    }
 };
 
 
@@ -105,6 +113,10 @@ public:
         scattered = Ray(rec.p, target - rec.p);
         attenuation = albedo;
         return true;
+    }
+
+    virtual Vec3 color() const{
+        return albedo;
     }
 
     Vec3 albedo;
@@ -120,6 +132,11 @@ public:
         attenuation = albedo;
         return (dot(scattered.direction, rec.normal) > 0);
     }
+
+    virtual Vec3 color() const {
+        return albedo;
+    }
+
     Vec3 albedo;
     float fuzz;
 };
@@ -183,6 +200,10 @@ public:
         return true;
     }
 
+    virtual float refIndex() const {
+        return ref_idx;
+    }
+
     float ref_idx;
 };
 
@@ -236,6 +257,14 @@ public:
         else
             scattered = Ray(rec.p, refracted);
         return true;
+    }
+
+    virtual Vec3 color() const {
+        return albedo;
+    }
+
+    virtual float refIndex() const {
+        return ref_idx;
     }
 
     float ref_idx;

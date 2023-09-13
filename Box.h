@@ -12,7 +12,7 @@ public :
     virtual bool hit(const Ray& r, float tmin, float tmax, hit_record& rec) const;
     virtual void setAABB();
 
-
+    virtual bool isPointInside(Vec3 point);
 
 
     Vec3 minPoint;

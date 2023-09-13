@@ -104,3 +104,7 @@ bool Box::hit(const Ray& r, float tmin, float tmax, hit_record& rec) const {
 	return true;
 
 }
+
+bool Box::isPointInside(Vec3 point) {
+	return boundingBox.isPointInside(point);
+}

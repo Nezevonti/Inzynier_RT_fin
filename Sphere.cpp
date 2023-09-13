@@ -33,3 +33,16 @@ void Sphere::setAABB() {
     this->boundingBox.minPoint = this->center - tmp;
     this->boundingBox.maxPoint = this->center + tmp;
 }
+
+bool Sphere::isPointInside(Vec3 point) {
+    float dX, dY, dZ;
+
+    dX = point.x() - this->center.x();
+    dY = point.y() - this->center.y();
+    dZ = point.z() - this->center.z();
+
+    float distance = sqrt(dX * dX + dY * dY + dZ * dZ);
+
+    if (distance < radius) return true;
+    return false;
+}

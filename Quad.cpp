@@ -69,3 +69,7 @@ void Quad::setAABB() {
 	boundingBox.minPoint = minPoint;
 	boundingBox.maxPoint = minPoint + u + v;
 }
+
+bool Quad::isPointInside(Vec3 point) {
+	return false;
+}

@@ -9,6 +9,8 @@ public:
     virtual bool hit(const Ray& r, float tmin, float tmax, hit_record& rec) const;
     virtual void setAABB();
 
+    virtual bool isPointInside(Vec3 point);
+
     bool insideQuad(float a, float b, hit_record& rec) const;
 
     Vec3 minPoint; //origin

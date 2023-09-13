@@ -31,6 +31,7 @@ bool Voxel::primitivesHit(const Ray& ray, float tmin, float tmax, hit_record& re
                     hit_anything = true;
                     closest_so_far = temp_rec.t;
                     rec = temp_rec;
+                    rec.hit_ptr = prim;
                 }
             }
         }

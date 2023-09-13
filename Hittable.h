@@ -30,6 +30,8 @@ public:
 
     virtual bool hit(const Ray& r, float t_min, float t_max, hit_record& rec) const = 0;
     virtual void setAABB() = 0;
+
+    virtual bool isPointInside(Vec3 point) = 0;
 };
 
 #endif

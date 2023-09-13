@@ -6,6 +6,7 @@
 //#include "Hittable.h"
 
 class Material;
+class Hittable;
 
 struct hit_record
 {
@@ -14,6 +15,8 @@ struct hit_record
     Vec3 p;
     Vec3 normal;
     Material* mat_ptr;
+
+    Hittable* hit_ptr;
 };
 
 
